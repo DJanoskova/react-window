@@ -34,6 +34,7 @@ type onScrollCallback = ({
   scrollDirection: ScrollDirection,
   scrollOffset: number,
   scrollUpdateWasRequested: boolean,
+  event: Event
 }) => void;
 
 type ScrollEvent = SyntheticEvent<HTMLDivElement>;
@@ -86,6 +87,7 @@ type State = {|
   scrollDirection: ScrollDirection,
   scrollOffset: number,
   scrollUpdateWasRequested: boolean,
+  event: Event
 |};
 
 type GetItemOffset = (
@@ -178,6 +180,7 @@ export default function createListComponent({
           ? this.props.initialScrollOffset
           : 0,
       scrollUpdateWasRequested: false,
+      event: null
     };
 
     // Always use explicit constructor for React components.
@@ -208,6 +211,7 @@ export default function createListComponent({
             prevState.scrollOffset < scrollOffset ? 'forward' : 'backward',
           scrollOffset: scrollOffset,
           scrollUpdateWasRequested: true,
+          event: null
         };
       }, this._resetIsScrollingDebounced);
     }
@@ -393,18 +397,21 @@ export default function createListComponent({
     _callOnScroll: (
       scrollDirection: ScrollDirection,
       scrollOffset: number,
-      scrollUpdateWasRequested: boolean
+      scrollUpdateWasRequested: boolean,
+      event: Event
     ) => void;
     _callOnScroll = memoizeOne(
       (
         scrollDirection: ScrollDirection,
         scrollOffset: number,
-        scrollUpdateWasRequested: boolean
+        scrollUpdateWasRequested: boolean,
+        event: Event
       ) =>
         ((this.props.onScroll: any): onScrollCallback)({
           scrollDirection,
           scrollOffset,
           scrollUpdateWasRequested,
+          event: Event
         })
     );
 
@@ -432,11 +439,13 @@ export default function createListComponent({
           scrollDirection,
           scrollOffset,
           scrollUpdateWasRequested,
+          event
         } = this.state;
         this._callOnScroll(
           scrollDirection,
           scrollOffset,
-          scrollUpdateWasRequested
+          scrollUpdateWasRequested,
+          event
         );
       }
     }
@@ -563,6 +572,7 @@ export default function createListComponent({
             prevState.scrollOffset < scrollLeft ? 'forward' : 'backward',
           scrollOffset,
           scrollUpdateWasRequested: false,
+          event
         };
       }, this._resetIsScrollingDebounced);
     };
@@ -589,6 +599,7 @@ export default function createListComponent({
             prevState.scrollOffset < scrollOffset ? 'forward' : 'backward',
           scrollOffset,
           scrollUpdateWasRequested: false,
+          event
         };
       }, this._resetIsScrollingDebounced);
     };
